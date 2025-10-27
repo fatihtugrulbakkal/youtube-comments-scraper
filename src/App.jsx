@@ -19,6 +19,7 @@ function App() {
   const [filteredAndSortedComments, setFilteredAndSortedComments] = useState([])
   const [allComments, setAllComments] = useState([])
   const [sentimentFilter, setSentimentFilter] = useState('all')
+  const [theme, setTheme] = useState('light')
 
   // Load API key from environment variable
   useEffect(() => {
@@ -287,9 +288,34 @@ function App() {
   }
 
   return (
-    <div className="app">
+    <div className={`app theme-${theme}`}>
       <div className="container">
-        <h1>🎥 YouTube Yorum Çekme Aracı</h1>
+        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px'}}>
+          <h1 style={{margin: 0}}>🎥 YouTube Yorum Çekme Aracı</h1>
+          <div style={{display: 'flex', gap: '10px', alignItems: 'center'}}>
+            <label htmlFor="theme-select" style={{fontSize: '14px', fontWeight: '600'}}>🎨 Tema:</label>
+            <select
+              id="theme-select"
+              value={theme}
+              onChange={(e) => setTheme(e.target.value)}
+              style={{
+                padding: '8px 12px',
+                borderRadius: '8px',
+                border: '1px solid #ddd',
+                fontSize: '14px',
+                cursor: 'pointer',
+                background: 'white'
+              }}
+            >
+              <option value="light">🌞 Açık</option>
+              <option value="dark">🌙 Koyu</option>
+              <option value="blue">💙 Mavi</option>
+              <option value="green">💚 Yeşil</option>
+              <option value="purple">💜 Mor</option>
+              <option value="pink">💗 Pembe</option>
+            </select>
+          </div>
+        </div>
         
         <div className="input-section">
           <div className="input-group">

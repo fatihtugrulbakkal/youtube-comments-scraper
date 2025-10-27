@@ -291,12 +291,6 @@ button:disabled {
   background: #1976d2;
 }
 
-.app.dark-mode .comment-text,
-.app.dark-mode .comment-date,
-.app.dark-mode .comment-meta {
-  color: #bdc3c7;
-}
-
 /* Responsive Design */
 @media (max-width: 768px) {
   h1 {
@@ -317,6 +311,16 @@ button:disabled {
   .export-btn-csv,
   .export-btn-json {
     width: 100%;
+  }
+
+  /* Mobile adjustments for theme selector */
+  .app.theme-dark .input-section,
+  .app.theme-dark .results-section {
+    background: #1e1e1e;
+  }
+
+  .app.theme-dark .comment-card {
+    background: #252525;
   }
 }
 
@@ -437,11 +441,6 @@ button:disabled {
     width: 100%;
     margin-top: 15px;
   }
-
-  /* Dark mode mobile adjustments */
-  .app.dark-mode .comment-card {
-    padding: 12px;
-  }
 }
 
 @media (max-width: 480px) {
@@ -460,4 +459,166 @@ button:disabled {
   input[type="text"] {
     font-size: 16px; /* Prevent zoom on iOS */
   }
+}
+
+/* ============================================
+   THEME VARIATIONS
+   ============================================ */
+
+/* Dark Theme */
+.app.theme-dark {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+.app.theme-dark h1 {
+  color: #e8e8e8;
+}
+
+.app.theme-dark .input-section,
+.app.theme-dark .results-section {
+  background: #1e1e1e;
+  color: #e8e8e8;
+}
+
+.app.theme-dark label {
+  color: #e8e8e8;
+}
+
+.app.theme-dark input[type="text"],
+.app.theme-dark .filter-input,
+.app.theme-dark .filter-select {
+  background: #2d2d2d;
+  border-color: #444;
+  color: #e8e8e8;
+}
+
+.app.theme-dark input[type="text"]:focus,
+.app.theme-dark .filter-input:focus,
+.app.theme-dark .filter-select:focus {
+  border-color: #667eea;
+}
+
+.app.theme-dark .filter-sort-section {
+  background: #252525;
+}
+
+.app.theme-dark .comment-card {
+  background: #252525;
+  border-color: #444;
+  color: #e8e8e8;
+}
+
+.app.theme-dark .comment-card:hover {
+  background: #2d2d2d;
+}
+
+.app.theme-dark .results-header h2,
+.app.theme-dark .comment-author strong,
+.app.theme-dark .comment-text {
+  color: #e8e8e8;
+}
+
+.app.theme-dark .comment-date,
+.app.theme-dark .comment-meta {
+  color: #b0b0b0;
+}
+
+/* Blue Theme */
+.app.theme-blue {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+}
+
+.app.theme-blue button,
+.app.theme-blue .stats-panel {
+  background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+}
+
+.app.theme-blue input[type="text"]:focus,
+.app.theme-blue .filter-input:focus,
+.app.theme-blue .filter-select:focus {
+  border-color: #2196f3;
+  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+}
+
+.app.theme-blue .fetch-all-btn {
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+}
+
+.app.theme-blue .load-more-btn {
+  background: #1976d2;
+}
+
+/* Green Theme */
+.app.theme-green {
+  background: linear-gradient(135deg, #0f5132 0%, #198754 100%);
+}
+
+.app.theme-green button,
+.app.theme-green .stats-panel {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+.app.theme-green input[type="text"]:focus,
+.app.theme-green .filter-input:focus,
+.app.theme-green .filter-select:focus {
+  border-color: #28a745;
+  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+}
+
+.app.theme-green .fetch-all-btn {
+  background: linear-gradient(135deg, #20c997 0%, #198754 100%);
+}
+
+.app.theme-green .load-more-btn {
+  background: #198754;
+}
+
+/* Purple Theme */
+.app.theme-purple {
+  background: linear-gradient(135deg, #4a148c 0%, #7b1fa2 100%);
+}
+
+.app.theme-purple button,
+.app.theme-purple .stats-panel {
+  background: linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%);
+}
+
+.app.theme-purple input[type="text"]:focus,
+.app.theme-purple .filter-input:focus,
+.app.theme-purple .filter-select:focus {
+  border-color: #9c27b0;
+  box-shadow: 0 0 0 3px rgba(156, 39, 176, 0.1);
+}
+
+.app.theme-purple .fetch-all-btn {
+  background: linear-gradient(135deg, #7b1fa2 0%, #6a1b9a 100%);
+}
+
+.app.theme-purple .load-more-btn {
+  background: #7b1fa2;
+}
+
+/* Pink Theme */
+.app.theme-pink {
+  background: linear-gradient(135deg, #c2185b 0%, #e91e63 100%);
+}
+
+.app.theme-pink button,
+.app.theme-pink .stats-panel {
+  background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%);
+}
+
+.app.theme-pink input[type="text"]:focus,
+.app.theme-pink .filter-input:focus,
+.app.theme-pink .filter-select:focus {
+  border-color: #e91e63;
+  box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+}
+
+.app.theme-pink .fetch-all-btn {
+  background: linear-gradient(135deg, #c2185b 0%, #ad1457 100%);
+}
+
+.app.theme-pink .load-more-btn {
+  background: #c2185b;
 }
