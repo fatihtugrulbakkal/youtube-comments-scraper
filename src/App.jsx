@@ -322,11 +322,21 @@ function App() {
                   <div className="stat-label">Toplam Yorum</div>
                 </div>
                 <div className="stat-card">
-                  <div className="stat-value">{Math.round(allComments.reduce((acc, c) => acc + c.likeCount, 0) / allComments.length)}</div>
+                  <div className="stat-value">
+                    {allComments.length > 0 
+                      ? Math.round(allComments.reduce((acc, c) => acc + c.likeCount, 0) / allComments.length)
+                      : 0
+                    }
+                  </div>
                   <div className="stat-label">Ort. Beğeni</div>
                 </div>
                 <div className="stat-card">
-                  <div className="stat-value">{Math.max(...allComments.map(c => c.likeCount))}</div>
+                  <div className="stat-value">
+                    {allComments.length > 0 
+                      ? Math.max(...allComments.map(c => c.likeCount))
+                      : 0
+                    }
+                  </div>
                   <div className="stat-label">En Çok Beğeni</div>
                 </div>
                 <div className="stat-card">
