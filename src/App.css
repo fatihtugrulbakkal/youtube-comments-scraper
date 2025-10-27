@@ -291,6 +291,12 @@ button:disabled {
   background: #1976d2;
 }
 
+.app.dark-mode .comment-text,
+.app.dark-mode .comment-date,
+.app.dark-mode .comment-meta {
+  color: #bdc3c7;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   h1 {
@@ -311,5 +317,147 @@ button:disabled {
   .export-btn-csv,
   .export-btn-json {
     width: 100%;
+  }
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  .app {
+    padding: 10px;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+  }
+
+  .input-section {
+    padding: 20px 15px;
+  }
+
+  .input-group {
+    margin-bottom: 15px;
+  }
+
+  .results-section {
+    padding: 20px 15px;
+  }
+
+  .results-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+    padding-bottom: 15px;
+  }
+
+  .results-header h2 {
+    font-size: 1.4rem;
+  }
+
+  .export-btn-csv,
+  .export-btn-json {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  .stats-panel {
+    padding: 15px;
+  }
+
+  .stats-panel h3 {
+    font-size: 1.1rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .stat-card {
+    padding: 12px;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+  }
+
+  .stat-label {
+    font-size: 0.8rem;
+  }
+
+  .filter-sort-section {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 15px;
+  }
+
+  .filter-input,
+  .filter-select {
+    font-size: 16px; /* Prevent zoom on iOS */
+    padding: 12px;
+  }
+
+  .comment-card {
+    padding: 12px;
+  }
+
+  .comment-author {
+    gap: 10px;
+  }
+
+  .comment-author img {
+    width: 35px;
+    height: 35px;
+  }
+
+  .comment-author strong {
+    font-size: 14px;
+  }
+
+  .comment-date {
+    font-size: 11px;
+  }
+
+  .comment-text {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .comment-meta {
+    font-size: 12px;
+  }
+
+  button {
+    padding: 12px;
+    font-size: 15px;
+  }
+
+  .load-more-btn {
+    width: 100%;
+    margin-top: 15px;
+  }
+
+  /* Dark mode mobile adjustments */
+  .app.dark-mode .comment-card {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-value {
+    font-size: 1.3rem;
+  }
+
+  input[type="text"] {
+    font-size: 16px; /* Prevent zoom on iOS */
   }
 }
