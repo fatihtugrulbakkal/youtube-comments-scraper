@@ -40,7 +40,7 @@ function App() {
 
   // Fetch comments from YouTube API
   const fetchComments = async (videoId, pageToken = '') => {
-    const url = `https://www.googleapis.com/youtube/v3/commentThreads?key=${apiKey}&videoId=${videoId}&part=snippet&maxResults=100&order=time&pageToken=${pageToken}`
+    const url = `https://www.googleapis.com/youtube/v3/commentThreads?key=${apiKey}&videoId=${videoId}&part=snippet%2Creplies&maxResults=100&order=time&pageToken=${pageToken}`
     
     const response = await fetch(url)
     const data = await response.json()
@@ -64,7 +64,17 @@ function App() {
         return allComments
       }
       
-      const newComments = data.items.map(item => item.snippet.topLevelComment.snippet)
+      // Extract comments with replies
+      const newComments = data.items.flatMap(item => {
+        const mainComment = item.snippet.topLevelComment.snippet
+        const replies = item.replies ? item.replies.comments.map(reply => ({
+          ...reply.snippet,
+          isReply: true,
+          parentId: mainComment.id
+        })) : []
+        return [mainComment, ...replies]
+      })
+      
       allComments = [...allComments, ...newComments]
       
       // API quota: 1 unit per request, max 10,000 units/day
@@ -117,7 +127,16 @@ function App() {
       } else {
         // Fetch only first page
         const data = await fetchComments(videoId)
-        setComments(data.items.map(item => item.snippet.topLevelComment.snippet))
+        const commentsWithReplies = data.items.flatMap(item => {
+          const mainComment = item.snippet.topLevelComment.snippet
+          const replies = item.replies ? item.replies.comments.map(reply => ({
+            ...reply.snippet,
+            isReply: true,
+            parentId: mainComment.id
+          })) : []
+          return [mainComment, ...replies]
+        })
+        setComments(commentsWithReplies)
         setNextPageToken(data.nextPageToken || '')
         setApiQuotaUsed(1)
         setProgress(`✓ ${data.items.length} yorum yüklendi | Kalan kota: 9,999${data.nextPageToken ? ` (daha fazla yorum var)` : ''}`)
@@ -138,7 +157,16 @@ function App() {
 
     try {
       const data = await fetchComments(videoId, nextPageToken)
-      setComments(prev => [...prev, ...data.items.map(item => item.snippet.topLevelComment.snippet)])
+      const commentsWithReplies = data.items.flatMap(item => {
+        const mainComment = item.snippet.topLevelComment.snippet
+        const replies = item.replies ? item.replies.comments.map(reply => ({
+          ...reply.snippet,
+          isReply: true,
+          parentId: mainComment.id
+        })) : []
+        return [mainComment, ...replies]
+      })
+      setComments(prev => [...prev, ...commentsWithReplies])
       setNextPageToken(data.nextPageToken || '')
     } catch (err) {
       setError(err.message || 'Daha fazla yorum yüklenirken bir hata oluştu!')
@@ -391,7 +419,8 @@ function App() {
 
             <div className="comments-list">
               {filteredAndSortedComments.map((comment, index) => (
-                <div key={index} className="comment-card">
+                <div key={index} className="comment-card" style={comment.isReply ? {marginLeft: '30px', background: '#f0f0f0', borderLeft: '3px solid #667eea'} : {}}>
+                  {comment.isReply && <div style={{fontSize: '12px', color: '#667eea', fontWeight: '600', marginBottom: '8px'}}>↳ Yanıt</div>}
                   <div className="comment-author">
                     <img src={comment.authorProfileImageUrl} alt={comment.authorDisplayName} />
                     <div>
@@ -409,7 +438,7 @@ function App() {
                   </div>
                   <div className="comment-text" dangerouslySetInnerHTML={{ __html: comment.textDisplay }} />
                   <div className="comment-meta">
-                    👍 {comment.likeCount} • {comment.totalReplyCount > 0 && `${comment.totalReplyCount} cevap`}
+                    👍 {comment.likeCount} • {comment.totalReplyCount > 0 && !comment.isReply && `${comment.totalReplyCount} cevap`}
                   </div>
                 </div>
               ))}
