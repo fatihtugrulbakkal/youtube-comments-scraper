@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Sentiment from 'sentiment'
+import { FixedSizeList } from 'react-window'
 import './App.css'
 
 const sentiment = new Sentiment()
@@ -475,53 +476,114 @@ function App() {
               </div>
             </div>
 
-            <div className="comments-list">
-              {filteredAndSortedComments.map((comment, index) => (
-                <div key={index} className="comment-card" style={comment.isReply ? {marginLeft: '30px', background: '#f0f0f0', borderLeft: '3px solid #667eea'} : {}}>
-                  {comment.isReply && <div style={{fontSize: '12px', color: '#667eea', fontWeight: '600', marginBottom: '8px'}}>↳ Yanıt</div>}
-                  <div className="comment-author">
-                    <img src={comment.authorProfileImageUrl} alt={comment.authorDisplayName} />
-                    <div>
-                      <strong>{comment.authorDisplayName}</strong>
-                      <span className="comment-date">
-                        {new Date(comment.publishedAt).toLocaleDateString('tr-TR', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })}
-                      </span>
+            <div className="comments-list" style={{height: '600px', overflow: 'auto'}}>
+              {filteredAndSortedComments.length > 100 ? (
+                <FixedSizeList
+                  height={600}
+                  itemCount={filteredAndSortedComments.length}
+                  itemSize={200}
+                  width="100%"
+                >
+                  {({ index, style }) => {
+                    const comment = filteredAndSortedComments[index]
+                    return (
+                      <div style={style}>
+                        <div className="comment-card" style={comment.isReply ? {marginLeft: '30px', background: '#f0f0f0', borderLeft: '3px solid #667eea'} : {}}>
+                          {comment.isReply && <div style={{fontSize: '12px', color: '#667eea', fontWeight: '600', marginBottom: '8px'}}>↳ Yanıt</div>}
+                          <div className="comment-author">
+                            <img src={comment.authorProfileImageUrl} alt={comment.authorDisplayName} />
+                            <div>
+                              <strong>{comment.authorDisplayName}</strong>
+                              <span className="comment-date">
+                                {new Date(comment.publishedAt).toLocaleDateString('tr-TR', {
+                                  year: 'numeric',
+                                  month: 'long',
+                                  day: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })}
+                              </span>
+                            </div>
+                          </div>
+                          {/* Duygu Etiketi */}
+                          {comment.sentiment && (
+                            <div style={{
+                              display: 'inline-block',
+                              padding: '4px 12px',
+                              borderRadius: '12px',
+                              fontSize: '12px',
+                              fontWeight: '600',
+                              marginBottom: '8px',
+                              background: comment.sentiment === 'positive' ? 'rgba(76, 175, 80, 0.1)' : 
+                                          comment.sentiment === 'negative' ? 'rgba(244, 67, 54, 0.1)' : 
+                                          'rgba(255, 152, 0, 0.1)',
+                              color: comment.sentiment === 'positive' ? '#4caf50' : 
+                                     comment.sentiment === 'negative' ? '#f44336' : '#ff9800',
+                              border: `1px solid ${comment.sentiment === 'positive' ? '#4caf50' : 
+                                                        comment.sentiment === 'negative' ? '#f44336' : '#ff9800'}`
+                            }}>
+                              {comment.sentiment === 'positive' && '😊 Pozitif'}
+                              {comment.sentiment === 'negative' && '😞 Negatif'}
+                              {comment.sentiment === 'neutral' && '😐 Nötr'}
+                            </div>
+                          )}
+                          <div className="comment-text" dangerouslySetInnerHTML={{ __html: comment.textDisplay }} />
+                          <div className="comment-meta">
+                            👍 {comment.likeCount} • {comment.totalReplyCount > 0 && !comment.isReply && `${comment.totalReplyCount} cevap`}
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  }}
+                </FixedSizeList>
+              ) : (
+                filteredAndSortedComments.map((comment, index) => (
+                  <div key={index} className="comment-card" style={comment.isReply ? {marginLeft: '30px', background: '#f0f0f0', borderLeft: '3px solid #667eea'} : {}}>
+                    {comment.isReply && <div style={{fontSize: '12px', color: '#667eea', fontWeight: '600', marginBottom: '8px'}}>↳ Yanıt</div>}
+                    <div className="comment-author">
+                      <img src={comment.authorProfileImageUrl} alt={comment.authorDisplayName} />
+                      <div>
+                        <strong>{comment.authorDisplayName}</strong>
+                        <span className="comment-date">
+                          {new Date(comment.publishedAt).toLocaleDateString('tr-TR', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </span>
+                      </div>
+                    </div>
+                    {/* Duygu Etiketi */}
+                    {comment.sentiment && (
+                      <div style={{
+                        display: 'inline-block',
+                        padding: '4px 12px',
+                        borderRadius: '12px',
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        marginBottom: '8px',
+                        background: comment.sentiment === 'positive' ? 'rgba(76, 175, 80, 0.1)' : 
+                                    comment.sentiment === 'negative' ? 'rgba(244, 67, 54, 0.1)' : 
+                                    'rgba(255, 152, 0, 0.1)',
+                        color: comment.sentiment === 'positive' ? '#4caf50' : 
+                               comment.sentiment === 'negative' ? '#f44336' : '#ff9800',
+                        border: `1px solid ${comment.sentiment === 'positive' ? '#4caf50' : 
+                                              comment.sentiment === 'negative' ? '#f44336' : '#ff9800'}`
+                      }}>
+                        {comment.sentiment === 'positive' && '😊 Pozitif'}
+                        {comment.sentiment === 'negative' && '😞 Negatif'}
+                        {comment.sentiment === 'neutral' && '😐 Nötr'}
+                      </div>
+                    )}
+                    <div className="comment-text" dangerouslySetInnerHTML={{ __html: comment.textDisplay }} />
+                    <div className="comment-meta">
+                      👍 {comment.likeCount} • {comment.totalReplyCount > 0 && !comment.isReply && `${comment.totalReplyCount} cevap`}
                     </div>
                   </div>
-                  {/* Duygu Etiketi */}
-                  {comment.sentiment && (
-                    <div style={{
-                      display: 'inline-block',
-                      padding: '4px 12px',
-                      borderRadius: '12px',
-                      fontSize: '12px',
-                      fontWeight: '600',
-                      marginBottom: '8px',
-                      background: comment.sentiment === 'positive' ? 'rgba(76, 175, 80, 0.1)' : 
-                                  comment.sentiment === 'negative' ? 'rgba(244, 67, 54, 0.1)' : 
-                                  'rgba(255, 152, 0, 0.1)',
-                      color: comment.sentiment === 'positive' ? '#4caf50' : 
-                             comment.sentiment === 'negative' ? '#f44336' : '#ff9800',
-                      border: `1px solid ${comment.sentiment === 'positive' ? '#4caf50' : 
-                                            comment.sentiment === 'negative' ? '#f44336' : '#ff9800'}`
-                    }}>
-                      {comment.sentiment === 'positive' && '😊 Pozitif'}
-                      {comment.sentiment === 'negative' && '😞 Negatif'}
-                      {comment.sentiment === 'neutral' && '😐 Nötr'}
-                    </div>
-                  )}
-                  <div className="comment-text" dangerouslySetInnerHTML={{ __html: comment.textDisplay }} />
-                  <div className="comment-meta">
-                    👍 {comment.likeCount} • {comment.totalReplyCount > 0 && !comment.isReply && `${comment.totalReplyCount} cevap`}
-                  </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
 
             {nextPageToken && (
