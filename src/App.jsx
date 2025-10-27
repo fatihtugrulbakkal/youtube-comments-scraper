@@ -18,11 +18,9 @@ function App() {
 
   // Load API key from environment variable
   useEffect(() => {
-    const envApiKey = import.meta.env.VITE_YOUTUBE_API_KEY
+    const envApiKey = import.meta.env.VITE_YOUTUBE_API_KEY || 'AIzaSyCbkcdeC-LHxLoslN3sYtIdXNK88UGmSZw'
     if (envApiKey) {
       setApiKey(envApiKey)
-    } else {
-      setError('API anahtarı bulunamadı! Lütfen .env dosyasını kontrol edin.')
     }
   }, [])
 
