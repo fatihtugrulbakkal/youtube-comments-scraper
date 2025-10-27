@@ -414,6 +414,15 @@ function App() {
                       </div>
                       <div className="stat-label">😞 Negatif</div>
                     </div>
+                    <div className="stat-card" style={{background: 'rgba(156, 39, 176, 0.2)'}}>
+                      <div className="stat-value" style={{color: '#9c27b0', fontSize: '1.3rem'}}>
+                        {filteredAndSortedComments.length > 0 
+                          ? (filteredAndSortedComments.reduce((acc, c) => acc + (c.sentimentScore || 0), 0) / filteredAndSortedComments.length).toFixed(1)
+                          : '0.0'
+                        }
+                      </div>
+                      <div className="stat-label">⭐ Ort. Duygu Skoru</div>
+                    </div>
                   </>
                 )}
               </div>
@@ -496,24 +505,47 @@ function App() {
                   </div>
                   {/* Duygu Etiketi */}
                   {comment.sentiment && (
-                    <div style={{
-                      display: 'inline-block',
-                      padding: '4px 12px',
-                      borderRadius: '12px',
-                      fontSize: '12px',
-                      fontWeight: '600',
-                      marginBottom: '8px',
-                      background: comment.sentiment === 'positive' ? 'rgba(76, 175, 80, 0.1)' : 
-                                  comment.sentiment === 'negative' ? 'rgba(244, 67, 54, 0.1)' : 
-                                  'rgba(255, 152, 0, 0.1)',
-                      color: comment.sentiment === 'positive' ? '#4caf50' : 
-                             comment.sentiment === 'negative' ? '#f44336' : '#ff9800',
-                      border: `1px solid ${comment.sentiment === 'positive' ? '#4caf50' : 
-                                            comment.sentiment === 'negative' ? '#f44336' : '#ff9800'}`
-                    }}>
-                      {comment.sentiment === 'positive' && '😊 Pozitif'}
-                      {comment.sentiment === 'negative' && '😞 Negatif'}
-                      {comment.sentiment === 'neutral' && '😐 Nötr'}
+                    <div style={{display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap'}}>
+                      <div style={{
+                        display: 'inline-block',
+                        padding: '4px 12px',
+                        borderRadius: '12px',
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        marginBottom: '8px',
+                        background: comment.sentiment === 'positive' ? 'rgba(76, 175, 80, 0.1)' : 
+                                    comment.sentiment === 'negative' ? 'rgba(244, 67, 54, 0.1)' : 
+                                    'rgba(255, 152, 0, 0.1)',
+                        color: comment.sentiment === 'positive' ? '#4caf50' : 
+                               comment.sentiment === 'negative' ? '#f44336' : '#ff9800',
+                        border: `1px solid ${comment.sentiment === 'positive' ? '#4caf50' : 
+                                              comment.sentiment === 'negative' ? '#f44336' : '#ff9800'}`
+                      }}>
+                        {comment.sentiment === 'positive' && '😊 Pozitif'}
+                        {comment.sentiment === 'negative' && '😞 Negatif'}
+                        {comment.sentiment === 'neutral' && '😐 Nötr'}
+                      </div>
+                      {/* Duygu Skoru Göstergesi */}
+                      {comment.sentimentScore !== undefined && (
+                        <div style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          padding: '4px 10px',
+                          borderRadius: '12px',
+                          fontSize: '11px',
+                          fontWeight: '600',
+                          background: 'rgba(156, 39, 176, 0.1)',
+                          color: '#9c27b0',
+                          border: '1px solid #9c27b0',
+                          marginBottom: '8px'
+                        }}>
+                          <span>⭐</span>
+                          <span style={{fontFamily: 'monospace'}}>
+                            {comment.sentimentScore > 0 ? '+' : ''}{comment.sentimentScore}
+                          </span>
+                        </div>
+                      )}
                     </div>
                   )}
                   <div className="comment-text" dangerouslySetInnerHTML={{ __html: comment.textDisplay }} />
