@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react'
+import Sentiment from 'sentiment'
 import './App.css'
+
+const sentiment = new Sentiment()
 
 function App() {
   const [videoUrl, setVideoUrl] = useState('')
@@ -15,6 +18,7 @@ function App() {
   const [sortBy, setSortBy] = useState('relevance')
   const [filteredAndSortedComments, setFilteredAndSortedComments] = useState([])
   const [allComments, setAllComments] = useState([])
+  const [sentimentFilter, setSentimentFilter] = useState('all')
 
   // Load API key from environment variable
   useEffect(() => {
@@ -182,7 +186,20 @@ function App() {
       return
     }
 
-    let filtered = [...comments]
+    // Duygu analizi ekle
+    const commentsWithSentiment = comments.map(comment => {
+      // HTML etiketlerini temizle
+      const cleanText = comment.textDisplay.replace(/<[^>]*>/g, '')
+      const result = sentiment.analyze(cleanText)
+      
+      return {
+        ...comment,
+        sentiment: result.score > 0 ? 'positive' : result.score < 0 ? 'negative' : 'neutral',
+        sentimentScore: result.score
+      }
+    })
+
+    let filtered = [...commentsWithSentiment]
 
     // Arama terimi ile filtreleme
     if (searchTerm) {
@@ -195,6 +212,11 @@ function App() {
     // Minimum beğeni ile filtreleme
     if (minLikes > 0) {
       filtered = filtered.filter(comment => comment.likeCount >= minLikes)
+    }
+
+    // Duygu filtresi
+    if (sentimentFilter !== 'all') {
+      filtered = filtered.filter(comment => comment.sentiment === sentimentFilter)
     }
 
     // Sıralama
@@ -219,7 +241,7 @@ function App() {
 
     setFilteredAndSortedComments(filtered)
     setAllComments(comments)
-  }, [comments, searchTerm, sortBy, minLikes])
+  }, [comments, searchTerm, sortBy, minLikes, sentimentFilter])
 
   const exportToCSV = () => {
     if (filteredAndSortedComments.length === 0) return
@@ -371,6 +393,29 @@ function App() {
                   <div className="stat-value">{new Set(allComments.map(c => c.authorDisplayName)).size}</div>
                   <div className="stat-label">Farklı Yazarlar</div>
                 </div>
+                {/* Duygu Analizi İstatistikleri */}
+                {filteredAndSortedComments.length > 0 && (
+                  <>
+                    <div className="stat-card" style={{background: 'rgba(76, 175, 80, 0.2)'}}>
+                      <div className="stat-value" style={{color: '#4caf50'}}>
+                        {filteredAndSortedComments.filter(c => c.sentiment === 'positive').length}
+                      </div>
+                      <div className="stat-label">😊 Pozitif</div>
+                    </div>
+                    <div className="stat-card" style={{background: 'rgba(255, 152, 0, 0.2)'}}>
+                      <div className="stat-value" style={{color: '#ff9800'}}>
+                        {filteredAndSortedComments.filter(c => c.sentiment === 'neutral').length}
+                      </div>
+                      <div className="stat-label">😐 Nötr</div>
+                    </div>
+                    <div className="stat-card" style={{background: 'rgba(244, 67, 54, 0.2)'}}>
+                      <div className="stat-value" style={{color: '#f44336'}}>
+                        {filteredAndSortedComments.filter(c => c.sentiment === 'negative').length}
+                      </div>
+                      <div className="stat-label">😞 Negatif</div>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
 
@@ -415,6 +460,19 @@ function App() {
                   <option value="length-asc">En Kısa</option>
                 </select>
               </div>
+              <div className="filter-group">
+                <label>😊 Duygu:</label>
+                <select
+                  value={sentimentFilter}
+                  onChange={(e) => setSentimentFilter(e.target.value)}
+                  className="filter-select"
+                >
+                  <option value="all">Tümü</option>
+                  <option value="positive">😊 Pozitif</option>
+                  <option value="neutral">😐 Nötr</option>
+                  <option value="negative">😞 Negatif</option>
+                </select>
+              </div>
             </div>
 
             <div className="comments-list">
@@ -436,6 +494,28 @@ function App() {
                       </span>
                     </div>
                   </div>
+                  {/* Duygu Etiketi */}
+                  {comment.sentiment && (
+                    <div style={{
+                      display: 'inline-block',
+                      padding: '4px 12px',
+                      borderRadius: '12px',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      marginBottom: '8px',
+                      background: comment.sentiment === 'positive' ? 'rgba(76, 175, 80, 0.1)' : 
+                                  comment.sentiment === 'negative' ? 'rgba(244, 67, 54, 0.1)' : 
+                                  'rgba(255, 152, 0, 0.1)',
+                      color: comment.sentiment === 'positive' ? '#4caf50' : 
+                             comment.sentiment === 'negative' ? '#f44336' : '#ff9800',
+                      border: `1px solid ${comment.sentiment === 'positive' ? '#4caf50' : 
+                                            comment.sentiment === 'negative' ? '#f44336' : '#ff9800'}`
+                    }}>
+                      {comment.sentiment === 'positive' && '😊 Pozitif'}
+                      {comment.sentiment === 'negative' && '😞 Negatif'}
+                      {comment.sentiment === 'neutral' && '😐 Nötr'}
+                    </div>
+                  )}
                   <div className="comment-text" dangerouslySetInnerHTML={{ __html: comment.textDisplay }} />
                   <div className="comment-meta">
                     👍 {comment.likeCount} • {comment.totalReplyCount > 0 && !comment.isReply && `${comment.totalReplyCount} cevap`}
