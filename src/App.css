@@ -193,10 +193,17 @@ button:disabled {
   color: #999;
 }
 
+.export-btn-csv,
+.export-btn-json,
+.export-btn-excel,
+.export-btn-pdf {
+  width: auto;
+  padding: 10px 16px;
+  font-size: 14px;
+}
+
 .export-btn-csv {
   background: #4caf50;
-  width: auto;
-  padding: 10px 20px;
 }
 
 .export-btn-csv:hover {
@@ -205,12 +212,26 @@ button:disabled {
 
 .export-btn-json {
   background: #ff9800;
-  width: auto;
-  padding: 10px 20px;
 }
 
 .export-btn-json:hover {
   background: #f57c00;
+}
+
+.export-btn-excel {
+  background: #217346;
+}
+
+.export-btn-excel:hover {
+  background: #1a5c37;
+}
+
+.export-btn-pdf {
+  background: #d32f2f;
+}
+
+.export-btn-pdf:hover {
+  background: #b71c1c;
 }
 
 .fetch-all-btn {

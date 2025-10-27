@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react'
 import Sentiment from 'sentiment'
+import * as XLSX from 'xlsx'
+import jsPDF from 'jspdf'
+import 'jspdf-autotable'
 import './App.css'
 
 const sentiment = new Sentiment()
@@ -288,6 +291,75 @@ function App() {
     link.click()
   }
 
+  // Excel Export
+  const exportToExcel = () => {
+    if (filteredAndSortedComments.length === 0) return
+
+    const data = filteredAndSortedComments.map(comment => ({
+      'Yazar': comment.authorDisplayName,
+      'Yorum': comment.textDisplay.replace(/<[^>]*>/g, ''), // HTML temizle
+      'Tarih': new Date(comment.publishedAt).toLocaleDateString('tr-TR'),
+      'Beğeni': comment.likeCount,
+      'Cevap Sayısı': comment.totalReplyCount || 0,
+      'Duygu': comment.sentiment === 'positive' ? 'Pozitif' : comment.sentiment === 'negative' ? 'Negatif' : 'Nötr',
+      'Duygu Skoru': comment.sentimentScore || 0
+    }))
+
+    const ws = XLSX.utils.json_to_sheet(data)
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, 'Yorumlar')
+    
+    // Sütun genişliklerini ayarla
+    ws['!cols'] = [
+      { wch: 20 }, // Yazar
+      { wch: 60 }, // Yorum
+      { wch: 15 }, // Tarih
+      { wch: 10 }, // Beğeni
+      { wch: 12 }, // Cevap
+      { wch: 10 }, // Duygu
+      { wch: 12 }  // Skor
+    ]
+
+    XLSX.writeFile(wb, `youtube-yorumlari-${Date.now()}.xlsx`)
+  }
+
+  // PDF Export
+  const exportToPDF = () => {
+    if (filteredAndSortedComments.length === 0) return
+
+    const doc = new jsPDF()
+    
+    // Başlık
+    doc.setFontSize(18)
+    doc.text('YouTube Yorumları Raporu', 14, 15)
+    
+    // İstatistikler
+    doc.setFontSize(11)
+    doc.text(`Toplam Yorum: ${filteredAndSortedComments.length}`, 14, 25)
+    doc.text(`Tarih: ${new Date().toLocaleDateString('tr-TR')}`, 14, 30)
+    
+    // Tablo için veri hazırla
+    const tableData = filteredAndSortedComments.slice(0, 50).map((comment, index) => [
+      index + 1,
+      comment.authorDisplayName.substring(0, 20),
+      comment.textDisplay.replace(/<[^>]*>/g, '').substring(0, 40) + '...',
+      new Date(comment.publishedAt).toLocaleDateString('tr-TR'),
+      comment.likeCount,
+      comment.sentiment === 'positive' ? 'Pozitif' : comment.sentiment === 'negative' ? 'Negatif' : 'Nötr'
+    ])
+
+    doc.autoTable({
+      startY: 35,
+      head: [['#', 'Yazar', 'Yorum', 'Tarih', 'Beğeni', 'Duygu']],
+      body: tableData,
+      styles: { fontSize: 8, cellPadding: 2 },
+      headStyles: { fillColor: [102, 126, 234], textColor: 255 },
+      alternateRowStyles: { fillColor: [245, 247, 250] }
+    })
+
+    doc.save(`youtube-yorumlari-${Date.now()}.pdf`)
+  }
+
   // Kelime Bulutu Hesaplama
   const calculateWordCloud = () => {
     if (!comments.length) return []
@@ -416,17 +488,23 @@ function App() {
 
         {comments.length > 0 && (
           <div className="results-section">
-            <div className="results-header">
-              <h2>Yorumlar ({filteredAndSortedComments.length} / {allComments.length})</h2>
-              <div style={{display: 'flex', gap: '10px'}}>
-                <button onClick={exportToCSV} className="export-btn-csv">
-                  📊 CSV İndir
-                </button>
-                <button onClick={exportToJSON} className="export-btn-json">
-                  📄 JSON İndir
-                </button>
-              </div>
-            </div>
+                        <div className="results-header">
+               <h2>Yorumlar ({filteredAndSortedComments.length} / {allComments.length})</h2>
+               <div style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
+                 <button onClick={exportToCSV} className="export-btn-csv">
+                   📊 CSV
+                 </button>
+                 <button onClick={exportToJSON} className="export-btn-json">
+                   📄 JSON
+                 </button>
+                 <button onClick={exportToExcel} className="export-btn-excel">
+                   📈 Excel
+                 </button>
+                 <button onClick={exportToPDF} className="export-btn-pdf">
+                   📑 PDF
+                 </button>
+               </div>
+             </div>
 
                          {/* Kelime Bulutu */}
              {wordCloudData.length > 0 && (
