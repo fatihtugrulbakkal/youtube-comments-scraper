@@ -20,6 +20,7 @@ function App() {
   const [allComments, setAllComments] = useState([])
   const [sentimentFilter, setSentimentFilter] = useState('all')
   const [theme, setTheme] = useState('light')
+  const [showWordCloud, setShowWordCloud] = useState(false)
 
   // Load API key from environment variable
   useEffect(() => {
@@ -287,6 +288,44 @@ function App() {
     link.click()
   }
 
+  // Kelime Bulutu Hesaplama
+  const calculateWordCloud = () => {
+    if (!comments.length) return []
+
+    const stopWords = new Set(['ve', 'ile', 'bir', 'bu', 'da', 'de', 'mi', 'mı', 'mu', 'mü', 'şu', 'o', 'ben', 'sen', 'biz', 'siz', 'onlar', 'ki', 'gibi', 'daha', 'çok', 'en', 'var', 'yok', 'için', 'olan', 'gibi'])
+    const wordCount = {}
+    const turkishChars = 'çğıöşüÇĞIİÖŞÜ'
+    
+    comments.forEach(comment => {
+      const cleanText = comment.textDisplay.replace(/<[^>]*>/g, '').toLowerCase()
+      const words = cleanText
+        .replace(/[^\w\sçğıöşüÇĞIİÖŞÜ]/g, ' ')
+        .split(/\s+/)
+        .filter(word => word.length > 3 && !stopWords.has(word) && !word.match(/^\d+$/))
+      
+      words.forEach(word => {
+        wordCount[word] = (wordCount[word] || 0) + 1
+      })
+    })
+
+    return Object.entries(wordCount)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 100)
+      .map(([word, count]) => ({
+        text: word,
+        value: count
+      }))
+  }
+
+  const wordCloudData = calculateWordCloud()
+  const getFontSize = (value) => {
+    const max = Math.max(...wordCloudData.map(w => w.value))
+    const min = Math.min(...wordCloudData.map(w => w.value))
+    const range = max - min || 1
+    const normalized = (value - min) / range
+    return Math.floor(12 + normalized * 36) // 12px - 48px
+  }
+
   return (
     <div className={`app theme-${theme}`}>
       <div className="container">
@@ -389,10 +428,82 @@ function App() {
               </div>
             </div>
 
-            {/* İstatistik Panel */}
-            <div className="stats-panel">
-              <h3>📊 İstatistikler</h3>
-              <div className="stats-grid">
+                         {/* Kelime Bulutu */}
+             {wordCloudData.length > 0 && (
+               <div style={{
+                 background: 'white',
+                 padding: '20px',
+                 borderRadius: '12px',
+                 marginBottom: '20px',
+                 border: '2px solid #e0e0e0'
+               }}>
+                 <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+                   <h3 style={{margin: 0, color: '#333'}}>☁️ En Çok Kullanılan Kelimeler</h3>
+                   <button 
+                     onClick={() => setShowWordCloud(!showWordCloud)}
+                     style={{
+                       padding: '8px 16px',
+                       background: '#667eea',
+                       color: 'white',
+                       border: 'none',
+                       borderRadius: '8px',
+                       cursor: 'pointer',
+                       fontSize: '14px',
+                       fontWeight: '600'
+                     }}
+                   >
+                     {showWordCloud ? '↑ Gizle' : '↓ Göster'}
+                   </button>
+                 </div>
+                 {showWordCloud && (
+                   <div style={{
+                     display: 'flex',
+                     flexWrap: 'wrap',
+                     gap: '12px',
+                     justifyContent: 'center',
+                     padding: '20px',
+                     background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+                     borderRadius: '8px',
+                     minHeight: '150px',
+                     alignItems: 'center'
+                   }}>
+                     {wordCloudData.slice(0, 50).map((word, index) => (
+                       <span
+                         key={index}
+                         style={{
+                           fontSize: `${getFontSize(word.value)}px`,
+                           fontWeight: word.value > 50 ? 'bold' : 'normal',
+                           padding: '6px 12px',
+                           background: `hsl(${200 + index * 3}, 60%, 85%)`,
+                           borderRadius: '20px',
+                           cursor: 'default',
+                           transition: 'all 0.3s ease',
+                           border: '2px solid transparent'
+                         }}
+                         onMouseEnter={(e) => {
+                           e.target.style.transform = 'scale(1.1)'
+                           e.target.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)'
+                           e.target.style.borderColor = '#667eea'
+                         }}
+                         onMouseLeave={(e) => {
+                           e.target.style.transform = 'scale(1)'
+                           e.target.style.boxShadow = 'none'
+                           e.target.style.borderColor = 'transparent'
+                         }}
+                         title={`${word.text}: ${word.value} kez kullanıldı`}
+                       >
+                         {word.text} ({word.value})
+                       </span>
+                     ))}
+                   </div>
+                 )}
+               </div>
+             )}
+
+             {/* İstatistik Panel */}
+             <div className="stats-panel">
+               <h3>📊 İstatistikler</h3>
+               <div className="stats-grid">
                 <div className="stat-card">
                   <div className="stat-value">{allComments.length}</div>
                   <div className="stat-label">Toplam Yorum</div>
