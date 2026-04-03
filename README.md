@@ -1,85 +1,99 @@
-# YouTube Yorum Çekme Aracı
+# 🎥 YouTube Yorum Çekme Aracı
 
-React.js kullanarak YouTube videolarındaki tüm yorumları çekebileceğiniz modern bir web uygulaması.
+React.js tabanlı bu web uygulaması, kullanıcıların bir YouTube video URL'si girerek o videodaki tüm yorumları çekmesine olanak tanır. Çekilen yorumlar üzerinde arama, filtreleme ve sıralama gibi işlemler yapılabilir. Ayrıca, yorumlar CSV, JSON ve Excel formatlarında dışa aktarılabilir ve temel duygu analizi yapılabilir.
 
-## Özellikler
+## ✨ Özellikler
 
-- 🎥 YouTube video yorumlarını çekme (tüm yorumları çekme desteği)
-- 📊 CSV ve JSON formatında dışa aktarma
-- 🔍 Arama ve filtreleme özellikleri
-- 📊 Detaylı istatistikler (toplam yorum, ortalama beğeni, vb.)
-- 📊 Sıralama seçenekleri (beğeni, tarih, uzunluk)
-- 🎨 Modern ve kullanıcı dostu arayüz
-- 📱 Responsive tasarım
-- 🔐 API anahtarını .env dosyasında güvenli saklama
+- YouTube videolarındaki tüm yorumları çekme
+- Çekilen yorumları CSV, JSON ve Excel formatlarında dışa aktarma
+- Yorumlar içinde anlık arama ve filtreleme yapma
+- Yorumları beğeni sayısına, tarihe veya uzunluğa göre sıralama
+- Temel duygu analizi (pozitif, negatif, nötr)
+- API anahtarını `.env` dosyasında güvenli bir şekilde yönetme
 
-## Kurulum
+## 🛠️ Teknoloji Yığını
 
-1. Projeyi klonlayın veya indirin
-2. Bağımlılıkları yükleyin:
+![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+![Vite](https://img.shields.io/badge/vite-%23646CFF.svg?style=for-the-badge&logo=vite&logoColor=white)
+![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
+![Axios](https://img.shields.io/badge/axios-purple?style=for-the-badge&logo=axios)
+![YouTube](https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)
+![jsPDF](https://img.shields.io/badge/jsPDF-FF0000?style=for-the-badge&logo=adobeacrobatreader&logoColor=white)
 
-```bash
-npm install
+## 🚀 Kurulum
+
+Projeyi yerel makinenizde çalıştırmak için aşağıdaki adımları izleyin:
+
+1.  **Depoyu klonlayın:**
+
+    ```bash
+    git clone https://github.com/fatihtugrulbakkal/youtube-comments-scraper.git
+    cd youtube-comments-scraper
+    ```
+
+2.  **Bağımlılıkları yükleyin:**
+
+    ```bash
+    npm install
+    ```
+
+3.  **Ortam değişkenlerini ayarlayın:**
+
+    `.env.example` dosyasını kopyalayarak `.env` adında yeni bir dosya oluşturun. Ardından kendi YouTube Data API v3 anahtarınızı bu dosyaya ekleyin.
+
+    ```bash
+    cp .env.example .env
+    ```
+
+    ```
+    VITE_YOUTUBE_API_KEY=YOUR_API_KEY_HERE
+    ```
+
+4.  **Geliştirme sunucusunu başlatın:**
+
+    ```bash
+    npm run dev
+    ```
+
+    Uygulama varsayılan olarak `http://localhost:5173` adresinde çalışacaktır.
+
+## 📖 Kullanım
+
+Uygulamayı başlattıktan sonra, yorumlarını çekmek istediğiniz YouTube videosunun URL'sini ilgili alana yapıştırın ve "Yorumları Çek" butonuna tıklayın. Yorumlar yüklendikten sonra arama, sıralama ve dışa aktarma özelliklerini kullanabilirsiniz.
+
+## 📂 Proje Yapısı
+
+```
+/tmp/youtube-comments-scraper
+├── API_ANAHTARI_REHBERI.md
+├── GELISTIRME_FIKIRLERI.md
+├── README.md
+├── index.html
+├── package-lock.json
+├── package.json
+├── src
+│   ├── App.css
+│   ├── App.jsx
+│   ├── index.css
+│   └── main.jsx
+├── vercel.json
+└── vite.config.js
 ```
 
-3. `.env.example` dosyasını `.env` olarak kopyalayın:
+## 🤝 Katkıda Bulunma
 
-```bash
-copy .env.example .env
-```
+Katkılarınız projeyi daha iyi hale getirmemize yardımcı olur. Katkıda bulunmak isterseniz, lütfen bir "pull request" açın. Her türlü geri bildirim ve öneriye açığız!
 
-veya Linux/Mac için:
-```bash
-cp .env.example .env
-```
+1.  Projeyi "fork" edin.
+2.  Yeni bir "branch" oluşturun (`git checkout -b ozellik/yeni-ozellik`).
+3.  Değişikliklerinizi "commit" edin (`git commit -m 'Yeni bir özellik eklendi'`).
+4.  Oluşturduğunuz "branch"i "push" edin (`git push origin ozellik/yeni-ozellik`).
+5.  Bir "Pull Request" açın.
 
-4. `.env` dosyasını açın ve API anahtarınızı ekleyin:
+## 📄 Lisans
 
-```env
-VITE_YOUTUBE_API_KEY=YOUR_API_KEY_HERE
-```
+Bu proje MIT Lisansı ile lisanslanmıştır.
 
-5. Geliştirme sunucusunu başlatın:
+---
 
-```bash
-npm run dev
-```
-
-6. Tarayıcınızda `http://localhost:5173` adresini açın
-
-## YouTube API Anahtarı Alma
-
-📖 **Detaylı rehber:** [API_ANAHTARI_REHBERI.md](API_ANAHTARI_REHBERI.md) dosyasına bakın.
-
-Kısa adımlar:
-1. [Google Cloud Console](https://console.cloud.google.com/) adresine gidin
-2. Yeni bir proje oluşturun
-3. "API ve Hizmetler" > "Kütüphane" bölümüne gidin
-4. "YouTube Data API v3"ü bulun ve etkinleştirin
-5. "Kimlik Bilgileri" > "Kimlik Bilgileri Oluştur" > "API anahtarı" seçin
-6. Oluşturulan API anahtarını kopyalayın ve `.env` dosyasına ekleyin
-
-## Kullanım
-
-1. `.env` dosyasına API anahtarınızı eklediğinizden emin olun
-2. Yorumlarını çekmek istediğiniz YouTube video URL'sini yapıştırın
-3. "İlk 100 Yorumu Çek" veya "📥 TÜM Yorumları Çek" butonuna tıklayın
-4. İstiyorsanız yorumları CSV veya JSON olarak indirebilirsiniz
-
-## Teknolojiler
-
-- React 18
-- Vite
-- Axios
-- YouTube Data API v3
-
-## Notlar
-
-- YouTube API'nin ücretsiz kotası var (günlük 10,000 istek)
-- Tüm yorumları otomatik olarak çekme desteği
-- `.env` dosyası GitHub'a yüklenmez (güvenlik için .gitignore'da tanımlı)
-- API anahtarınızı asla paylaşmayın veya commit'lemeyin
-
-## Lisans
-
-MIT
+İletişim: [Fatih Tuğrul Bakkal](https://github.com/fatihtugrulbakkal)
